@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+
+const style = {
+    bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#F7451F] to-[#F9C0B3]`, container: ``
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (<div className={style.bg}>
+        <div className={style.container}>
+            <h3 className={style.heading}>To Do App</h3>
+            <form className={style.form}>
+                <input className={style.input} type={"text"} placeholder={"Add To Do"}/>
+                <button className={style.button}></button>
+            </form>
+        </div>
+    </div>);
 }
 
 export default App;
