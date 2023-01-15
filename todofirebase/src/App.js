@@ -3,7 +3,7 @@ import {AiOutlinePlus} from "react-icons/ai";
 import Todo from "./Todo";
 
 import {db} from './firebase'
-import {query, collection, onSnapshot, updateDoc, doc, addDoc} from 'firebase/firestore'
+import {query, collection, onSnapshot, updateDoc, doc, addDoc, deleteDoc} from 'firebase/firestore'
 
 const style = {
     bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#00A6FF] to-[#90FCFF]`,
@@ -16,26 +16,26 @@ const style = {
 }
 
 function App() {
-    const [todos, setTodos] = useState([`Learn`, 'React', 'Wow'])
+    const [todos, setTodos] = useState([``])
     const [input, setInput] = useState('')
+
 
     // Create todos
     const createTodo = async (e) => {
-            e.preventDefault(e);
-            if (input === ``) {
-                alert(`Please enter a valid Todo`)
-                // return to stop code
-                return
-            }
-            await addDoc(collection((db, `todos`), {
-                text: input, completed: false
-            }))
-            setInput(``)
+        e.preventDefault(e);
+        if (input === ``) {
+            alert(`Please enter a valid Todo`)
+            // return to stop code
+            return
         }
-    ;
+        await addDoc(collection(db, `todos`), {
+            text: input, completed: true
+        });
+        setInput(``)
+    };
 
 
-// Read todos
+    // Read todos
     useEffect(() => {
         const q = query(collection(db, `todos`))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -46,15 +46,21 @@ function App() {
             setTodos(todosArr)
         });
         return () => unsubscribe();
-    }, [])
+    }, []);
 
-// Update todos
+
+    // Update todos
     const toggleComplete = async (todo) => {
         await updateDoc(doc(db, `todos`, todo.id), {
             completed: !todo.completed
-        })
+        });
     }
-// Delete todos
+
+
+    // Delete todos
+    const deleteTodo = async (id) => {
+        await deleteDoc(doc(db, 'todos', id))
+    }
 
 
     return (<div className={style.bg}>
@@ -66,9 +72,11 @@ function App() {
                 <button className={style.button}><AiOutlinePlus size={30}/></button>
             </form>
             <ul>
-                {todos.map((todo, index) => (<Todo key={index} todo={todo} toggleComplete={toggleComplete}/>))}
+                {todos.length < 1 ? null : <p className={style.count}>{`You have ${todos.length} Todos`}</p>}
+                {todos.map((todo, index) => (
+                    <Todo key={index} todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo}/>))}
             </ul>
-            <p className={style.count}>You have 2 Todos</p>
+            <p className={style.count}>{`You have ${todos.length} Todos`}</p>
         </div>
     </div>);
 }
