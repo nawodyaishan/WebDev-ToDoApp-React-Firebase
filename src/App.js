@@ -72,11 +72,10 @@ function App() {
                 <button className={style.button}><AiOutlinePlus size={30}/></button>
             </form>
             <ul>
-                {todos.length < 1 ? null : <p className={style.count}>{`You have ${todos.length} Todos`}</p>}
                 {todos.map((todo, index) => (
                     <Todo key={index} todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo}/>))}
             </ul>
-            <p className={style.count}>{`You have ${todos.length} Todos`}</p>
+            {todos.length < 1 ? "" : <p className={style.count}>{`You have ${todos.length} Todos`}</p>}
         </div>
     </div>);
 }
