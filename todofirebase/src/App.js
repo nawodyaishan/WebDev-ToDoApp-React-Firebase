@@ -1,6 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AiOutlinePlus} from "react-icons/ai";
 import Todo from "./Todo";
+
+import {db} from './firebase'
+import {query, collection, onSnapshot} from 'firebase/firestore'
 
 const style = {
     bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#00A6FF] to-[#90FCFF]`,
@@ -14,6 +17,23 @@ const style = {
 
 function App() {
     const [todos, setTodos] = useState([`Learn`, 'React', 'Wow'])
+
+    // Create todos
+    // Read todos
+    useEffect(() => {
+        const q = query(collection(db, `todos`))
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            let todosArr = [];
+            querySnapshot.forEach((doc) => {
+                todosArr.push({...doc.data(), id: doc.id})
+            });
+            setTodos(todosArr)
+        });
+        return () => unsubscribe();
+    }, [])
+
+    // Update todos
+    // Delete todos
 
     return (<div className={style.bg}>
         <div className={style.container}>
