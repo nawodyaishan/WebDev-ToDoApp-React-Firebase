@@ -3,7 +3,7 @@ import {AiOutlinePlus} from "react-icons/ai";
 import Todo from "./Todo";
 
 import {db} from './firebase'
-import {query, collection, onSnapshot, updateDoc, doc} from 'firebase/firestore'
+import {query, collection, onSnapshot, updateDoc, doc, addDoc} from 'firebase/firestore'
 
 const style = {
     bg: `h-screen w-screen p-4 bg-gradient-to-r from-[#00A6FF] to-[#90FCFF]`,
@@ -17,9 +17,25 @@ const style = {
 
 function App() {
     const [todos, setTodos] = useState([`Learn`, 'React', 'Wow'])
+    const [input, setInput] = useState('')
 
     // Create todos
-    // Read todos
+    const createTodo = async (e) => {
+            e.preventDefault(e);
+            if (input === ``) {
+                alert(`Please enter a valid Todo`)
+                // return to stop code
+                return
+            }
+            await addDoc(collection((db, `todos`), {
+                text: input, completed: false
+            }))
+            setInput(``)
+        }
+    ;
+
+
+// Read todos
     useEffect(() => {
         const q = query(collection(db, `todos`))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -32,19 +48,21 @@ function App() {
         return () => unsubscribe();
     }, [])
 
-    // Update todos
+// Update todos
     const toggleComplete = async (todo) => {
         await updateDoc(doc(db, `todos`, todo.id), {
             completed: !todo.completed
         })
     }
-    // Delete todos
+// Delete todos
+
 
     return (<div className={style.bg}>
         <div className={style.container}>
             <h3 className={style.heading}>To Do App</h3>
-            <form className={style.form}>
-                <input className={style.input} type={"text"} placeholder={"Add To Do"}/>
+            <form onSubmit={createTodo} className={style.form}>
+                <input value={input} onChange={e => setInput(e.target.value)} className={style.input} type={"text"}
+                       placeholder={"Add To Do"}/>
                 <button className={style.button}><AiOutlinePlus size={30}/></button>
             </form>
             <ul>
